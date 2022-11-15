@@ -1,18 +1,23 @@
-# Здесь храним все перменные и методы для их чтения и установки (а-ля работа с классами)
+# Здесь храним все перменные и методы для их чтения и установки
 
-total_candy = 150
+total_candies = 150
 max_candy = 28
 min_candy = 1
+take_user = 0
 
 def getCandies():
-    global total_candy
-    return total_candy
+    global total_candies
+    return total_candies
+
+def setCandies(leftover: int):
+    global total_candies
+    total_candies = leftover
 
 def checkWinner():
-    if getCandies() <= 28:
+    if getCandies() <= 27:
         return True
 
-def setCandies(count: int):
-    global total_candy
-    total_candy = count
+def takeUser():
+    global take_user
+    return take_user
 
