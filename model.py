@@ -4,8 +4,9 @@ total_candies = 150
 max_candy = 28
 min_candy = 1
 take_user = 0
+players = 0
 
-def getCandies():
+def getCandies() -> int:
     global total_candies
     return total_candies
 
@@ -21,3 +22,18 @@ def takeUser():
     global take_user
     return take_user
 
+def setPlayer(player):
+    global players
+    players = player
+
+def getPlayer() -> int:
+    global total_candies
+    return total_candies
+
+def maxCandy():
+    global max_candy
+    return max_candy
+
+def minCandy():
+    global min_candy
+    return min_candy

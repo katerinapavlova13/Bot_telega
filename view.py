@@ -1,4 +1,5 @@
 # сюда все функции отправляющие сообщения
+import asyncio
 from aiogram import types
 import random
 import model
@@ -24,39 +25,52 @@ async def regulations(message: types.Message):
                            'Чтобы начать введи /go.')
 
 async def goGame(message: types.Message):
-    await bot.send_message(message.from_user.id, 'Так и быть делай первый ход.')
+    await bot.send_message(message.from_user.id,
+                           'Так и быть делай первый ход.')
 
 async def moveUser(message: types.Message):
-    teke_user = int(message.text)
-    if int(teke_user) > model.max_candy:
-        await bot.send_message(message.from_user.id, 'Эй, ты взял слишком много, не больше 28!!!')
-    elif int(teke_user) < model.min_candy:
-        await bot.send_message(message.from_user.id, 'Ничего не брать тоже нельзя!')
-    else:
-        total_count = model.getCandies()
-        leftover = total_count - teke_user
-        model.setCandies(leftover)
-        model.getCandies()
-        await bot.send_message(message.from_user.id,
-                               f'{message.from_user.first_name} ты взял(а) {teke_user} конфет, осталось {leftover}.')
-        if model.checkWinner() == True:
+    user = message.text
+    model.setPlayer(user)
+    if (message.text).isdigit():
+        if int(user) > model.maxCandy():
             await bot.send_message(message.from_user.id,
-                                   'Я выйграл! Приятно иметь с тобой дело!=)')
-        await moveBot()
-
+                                   f'Эй, ты взял слишком много, не больше {model.maxCandy()}!!!')
+        elif int(user) < model.minCandy():
+            await bot.send_message(message.from_user.id,
+                                   'Ничего не брать тоже нельзя!')
+        else:
+            total_count = model.getCandies()
+            take_user = int(message.text)
+            leftover = total_count - take_user
+            await bot.send_message(message.from_user.id,
+                                   f'{message.from_user.first_name} ты взял(а) {take_user} конфет,'
+                                   f' осталось {leftover}.')
+            if model.checkWinner() == True:
+                await bot.send_message(message.from_user.id,
+                                       'Я выйграл! Приятно иметь с тобой дело!=)')
+                return
+            model.setCandies(leftover)
+            await moveBot(message)
 
 async def moveBot(message: types.Message):
     candies = model.getCandies()
-    take = random.randint(1, 28)
+    if candies < 29:
+        take = candies
+    else:
+        take = random.randint(1, 28)
     leftover = candies - take
-    model.setCandies(leftover)
-    model.getCandies()
     await bot.send_message(message.from_user.id,
-                           f'Я взял {take} конфет, осталось {leftover}.')
+                               f'Я взял {take} конфет, осталось {leftover}.')
     if model.checkWinner() == True:
         await bot.send_message(message.from_user.id,
-                               f'{message.from_user.first_name}, ты выйграл(а)! Мои поздравления!')
-    else:
-        await bot.send_message(message.from_user.id,
-                               f'{message.from_user.first_name}, теперь твой ход.')
-    await moveUser(player)
+                               f'{message.from_user.first_name}, '
+                               f'ты выйграл(а)! Мои поздравления!')
+        return
+    model.setCandies(leftover)
+    await asyncio.sleep(1)
+    await nextMove(message)
+
+
+async def nextMove(message: types.Message):
+    await bot.send_message(message.from_user.id, f'{message.from_user.first_name}, '
+                                                 f'теперь твой ход')
