@@ -1,5 +1,3 @@
-# Здесь храним все перменные и методы для их чтения и установки
-
 total_candies = 150
 max_candy = 28
 min_candy = 1
@@ -14,8 +12,10 @@ def setCandies(leftover: int):
     global total_candies
     total_candies = leftover
 
-def checkWinner():
-    if getCandies() <= 27:
+def checkWinner(leftover: int):
+    if leftover > 28:
+        return False
+    else:
         return True
 
 def takeUser():

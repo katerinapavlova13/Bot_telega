@@ -1,5 +1,3 @@
-# Здесь что-то типа контроллера связывающий хендлеры и вью
-
 from aiogram import types
 import view
 
